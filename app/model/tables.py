@@ -11,10 +11,11 @@ class User(db.Model):
     # campos
     id = db.Column(db.Integer, primary_key=True, unique= True)
     name = db.Column(db.String(30), unique=True)
+    email = db.Column(db.String(30))
+    addres = db.Column(db.String(30))
     fone = db.Column(db.String(15))
     createat = db.Column(db.DateTime) 
-    description = db.Column(db.Text)
-
+    
     dependents = db.relationship('Dependent')
 
     def __init__(self, name ):

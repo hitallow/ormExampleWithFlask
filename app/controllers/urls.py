@@ -26,6 +26,11 @@ def insertUser():
 @app.route('/search/',defaults={'name':'all'}, methods=['GET'])
 @app.route('/search/<name>', methods=['GET'])
 def search(name):
-    if name != 'all':
-        return 'nome {}'.format(name)
-    return 'você não passou nome'
+    if name == 'all':
+        x = User.query.order_by(User.name).all()
+    print(x)
+    return 'OK'
+
+@app.route('/getall')
+def getAll():
+    pass
