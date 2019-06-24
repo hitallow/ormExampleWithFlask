@@ -62,10 +62,7 @@ class Controller {
             this.modalAdd.classList.remove('in');
             this.body.style = '';
             this.modalAdd.style = 'display : none;';
-            document.getElementsByClassName('modal-backdrop')[0].remove();
-
-
-            
+            document.getElementsByClassName('modal-backdrop')[0].remove();            
         });
         // envia minha requisiçao ajax
         xhr.send(user);
