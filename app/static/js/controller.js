@@ -22,17 +22,74 @@ $(document).ready(function () {
     });
 });
 
-console.log('oi');
 
 class Controller {
     constructor() {
-        this.dataUser = document.getElementById("#data-users");
+        this.dataUser = document.getElementById("data-users");
+
+        this.btnAddUser = document.getElementById('addUser');
+
+        this.insertUserForm = document.getElementById('insertUserForm');
+
+        this.modalAdd = document.getElementById('addEmployeeModal');
+
+        this.body = document.body;
+
+        this.initEvents();
+    }
+
+    initEvents() {
+        this.btnAddUser.addEventListener('click', e => {
+            e.preventDefault();
+            let user = this.colectData();
+            this.postOnBackEnd(user);
+
+        })
+        console.log(this.body);
+    }
+
+
+    postOnBackEnd(user) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", '/index/insertUser');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onloadend = (e =>{
+            //this.body.className = this.body.className.replace('modal-open','');
+            this.body.classList.remove('modal-open');
+            this.modalAdd.classList.remove('in');
+            this.body.style = '';
+            this.modalAdd.style = 'display : none;';
+            document.getElementsByClassName('modal-backdrop')[0].remove();
+            
+        });
+        // envia minha requisiçao ajax
+        xhr.send(JSON.stringify(user));
+    }
+
+    colectData() {
+        let user = {};
+        let isvalid = true;
+        this.btnAddUser.disable = true;
+        [...this.insertUserForm].forEach(element => {
+            if (element.name && element.className === 'form-control') {
+                if (element.value) {
+                    user[element.name] = element.value;
+                } else {
+                    isvalid = false;
+                }
+            }
+        });
+        if (isvalid)
+            return user;
+        return false;
     }
 
 
 
 
-    insertHTML(contentTr,data) {
+
+
+    insertHTML(contentTr, data) {
         let html =
             `<tr>
         <td>
@@ -54,10 +111,10 @@ class Controller {
     </tr>`
     }
 
-    addEvents(tr){
+    addEvents(tr) {
 
     }
 }
 
 
-let contr = new Controller();
+let control = new Controller();

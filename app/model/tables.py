@@ -18,8 +18,11 @@ class User(db.Model):
     
     dependents = db.relationship('Dependent')
 
-    def __init__(self, name ):
+    def __init__(self, name, email = None, addres = None, fone = None ):
         self.name = name
+        self.email = email
+        self.addres = addres
+        self.fone = fone
 
     def __repr__(self):
         return "<User : {}>".format(self.name)
@@ -34,7 +37,7 @@ class Dependent(db.Model):
     # campos
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(10))
-    
+
         #Exemplo de relacionamento
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     user = db.relationship('User', back_populates='dependents')

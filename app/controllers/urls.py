@@ -1,6 +1,7 @@
 from app import app, db
 from flask import render_template
-
+from flask import request, jsonify
+import json
 from app.model.tables import User, Dependent 
 
 """
@@ -16,12 +17,14 @@ def index():
 def getUser():
     return 'teste'
 
-@app.route('/insertUser')
+@app.route('/index/insertUser', methods=['POST'])
+@app.route('/index/insertuser', methods=['POST'])
 def insertUser():
-    user = User("Maria")
+    data = request.get_json()
+    user = User(name=data['name'],email=data['email'], addres=data['address'], fone=data['phone'])
     db.session.add(user)
     db.session.commit()
-    return "<h1>Testando</h1>"
+    return "OK"
 
 @app.route('/search/',defaults={'name':'all'}, methods=['GET'])
 @app.route('/search/<name>', methods=['GET'])
