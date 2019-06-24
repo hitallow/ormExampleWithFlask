@@ -35,6 +35,8 @@ class Controller {
 
         this.body = document.body;
 
+        this.dataUsers = document.getElementById('data-users');
+
         this.initEvents();
     }
 
@@ -43,6 +45,7 @@ class Controller {
             e.preventDefault();
             let user = this.colectData();
             this.postOnBackEnd(user);
+            this.insertHTML(user);
 
         })
         console.log(this.body);
@@ -60,10 +63,12 @@ class Controller {
             this.body.style = '';
             this.modalAdd.style = 'display : none;';
             document.getElementsByClassName('modal-backdrop')[0].remove();
+
+
             
         });
         // envia minha requisiçao ajax
-        xhr.send(JSON.stringify(user));
+        xhr.send(user);
     }
 
     colectData() {
@@ -86,19 +91,16 @@ class Controller {
 
 
 
-
-
-
-    insertHTML(contentTr, data) {
+    insertHTML( data) {
         let html =
-            `<tr>
+            `
         <td>
             <span class="custom-checkbox">
                 <input type="checkbox" id="checkbox1" name="options[]" value="1">
                 <label for="checkbox1"></label>
             </span>
         </td>
-        <td>Thomas Hardy</td>
+        <td>${data.name}</td>
         <td>${data.email}</td>
         <td>${data.address}</td>
         <td>${data.phone}</td>
@@ -107,8 +109,11 @@ class Controller {
                     data-toggle="tooltip" title="Edit">&#xE254;</i></a>
             <a href="#deleteEmployeeModal" class="delete" data-toggle="modal"><i class="material-icons"
                     data-toggle="tooltip" title="Delete">&#xE872;</i></a>
-        </td>
-    </tr>`
+        </td>`
+
+    let tr = document.createElement("tr");
+    tr.innerHTML = html;
+    this.dataUsers.appendChild(tr);
     }
 
     addEvents(tr) {
