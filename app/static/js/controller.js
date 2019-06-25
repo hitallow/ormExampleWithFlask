@@ -79,7 +79,17 @@ class Controller {
             let data = this.colectData(this.editUserForm);
             data['id'] = id;
             this.postOnBackEndEdit(data);
+            this.setDatas(el, data);
         });
+    }
+    setDatas(tr, data) {
+        console.log(data);
+        for (let el in data) {
+            if (el !== 'id') {
+                console.log(el);
+                tr.querySelector('.'+el).innerHTML = data[el];
+            }
+        };
     }
 
     selectUsers() {
@@ -100,12 +110,9 @@ class Controller {
         xhr.open("POST", '/index/delete');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onloadend = (e => {
-            //this.body.className = this.body.className.replace('modal-open','');
-            this.body.classList.remove('modal-open');
-            this.modalDelete.classList.remove('in');
-            this.body.style = '';
-            this.modalDelete.style = 'display : none;';
-            document.getElementsByClassName('modal-backdrop')[0].remove();
+           
+            this.alterVisibleModal(this.modalDelete)
+           
         });
         // envia minha requisiçao ajax
         xhr.send(JSON.stringify({ id }));
@@ -118,6 +125,8 @@ class Controller {
         modal.style = 'display : none;';
         document.getElementsByClassName('modal-backdrop')[0].remove();
     }
+
+    
     postOnBackEndEdit(data) {
         let xhr = new XMLHttpRequest();
         xhr.open("POST", '/index/update');
@@ -138,12 +147,8 @@ class Controller {
         xhr.open("POST", '/index/insertUser');
         xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onloadend = (e => {
-            //this.body.className = this.body.className.replace('modal-open','');
-            this.body.classList.remove('modal-open');
-            this.modalAdd.classList.remove('in');
-            this.body.style = '';
-            this.modalAdd.style = 'display : none;';
-            document.getElementsByClassName('modal-backdrop')[0].remove();
+           
+            this.alterVisibleModal(this.modalAdd);
             let response = JSON.parse(xhr.responseText);
             fn(response.id);
         });
