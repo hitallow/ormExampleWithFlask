@@ -43,7 +43,18 @@ def delete():
     db.session.delete(user) 
     db.session.commit()
     return 'OK'
-
+@app.route('/index/update', methods=['POST'])
+def update():
+    data = request.get_json()
+    print(data)
+    user = User.query.filter_by(id = data['id']).first()
+    user.name = data['name'] 
+    user.email = data['email'] 
+    user.address = data['address'] 
+    user.fone = data['phone'] 
+    db.session.add(user)
+    db.session.commit()
+    return 'OK'
 
 @app.route('/getall')
 def getAll():

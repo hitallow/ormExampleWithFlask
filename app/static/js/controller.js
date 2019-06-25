@@ -35,11 +35,17 @@ class Controller {
 
         this.modalDelete = document.getElementById('deleteEmployeeModal');
 
+        this.modalEdit = document.getElementById('editEmployeeModal');
+
         this.body = document.body;
 
         this.dataUsers = document.getElementById('data-users');
 
         this.btnDelete = document.getElementById('delete');
+
+        this.editUserForm = document.getElementById('editEmployee');
+
+        this.btnEditUser = document.getElementById("edit");
 
         this.initEvents();
 
@@ -49,7 +55,7 @@ class Controller {
     initEvents() {
         this.btnAddUser.addEventListener('click', e => {
             e.preventDefault();
-            let user = this.colectData();
+            let user = this.colectData(this.insertUserForm);
             if (user) {
                 this.postOnBackEndInsert(user, id => {
                     this.insertHTML(user, id);
@@ -63,7 +69,17 @@ class Controller {
             let id = el.getAttribute('data-id');
             this.postOnBackEndDelete(id);
             el.remove();
-        })
+        });
+
+        this.btnEditUser.addEventListener('click', e => {
+            e.preventDefault();
+            let el = this.dataUsers.querySelector('.InEditionMode');
+            let id = el.getAttribute('data-id');
+            // this.loadDataEdit(el);
+            let data = this.colectData(this.editUserForm);
+            data['id'] = id;
+            this.postOnBackEndEdit(data);
+        });
     }
 
     selectUsers() {
@@ -95,6 +111,26 @@ class Controller {
         xhr.send(JSON.stringify({ id }));
     }
 
+    alterVisibleModal(modal) {
+        this.body.classList.remove('modal-open');
+        modal.classList.remove('in');
+        this.body.style = '';
+        modal.style = 'display : none;';
+        document.getElementsByClassName('modal-backdrop')[0].remove();
+    }
+    postOnBackEndEdit(data) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", '/index/update');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onloadend = (e => {
+            //this.body.className = this.body.className.replace('modal-open','');
+            this.alterVisibleModal(this.modalEdit);
+        });
+        // envia minha requisiçao ajax
+        xhr.send(JSON.stringify(data));
+    }
+
+
 
     postOnBackEndInsert(user, fn) {
 
@@ -115,11 +151,11 @@ class Controller {
         xhr.send(JSON.stringify(user));
     }
 
-    colectData() {
+    colectData(form) {
         let user = {};
         let isvalid = true;
         this.btnAddUser.disable = true;
-        [...this.insertUserForm].forEach(element => {
+        [...form].forEach(element => {
             if (element.name && element.className === 'form-control') {
                 if (element.value) {
                     user[element.name] = element.value;
@@ -133,7 +169,14 @@ class Controller {
         return false;
     }
 
+    loadDataEdit(tr) {
+        [...this.editUserForm].forEach(el => {
+            if (el.name && el.className === 'form-control') {
+                el.value = tr.querySelector('.' + el.name).innerHTML;
+            }
+        })
 
+    }
 
     insertHTML(data, id) {
 
@@ -145,10 +188,10 @@ class Controller {
                 <label for="checkbox1"></label>
             </span>
         </td>
-        <td>${data.name}</td>
-        <td>${data.email}</td>
-        <td>${data.address}</td>
-        <td>${data.phone}</td>
+        <td class='name'>${data.name}</td>
+        <td class='email'>${data.email}</td>
+        <td class='address'>${data.address}</td>
+        <td class='phone' >${data.phone}</td>
         <td>
             <a href="#editEmployeeModal" class="edit" data-toggle="modal"><i class="material-icons"
                     data-toggle="tooltip" title="Edit">&#xE254;</i></a>
@@ -169,16 +212,15 @@ class Controller {
             el.classList.remove('InEditionMode');
         });
         tr.classList.add('InEditionMode');
-        // if (!tr.classList.contains('InEditionMode')) {
-        //     tr.classList.add('InEditionMode');
-        // } else {
-        //     tr.classList.remove('InEditionMode');
-        // }
     }
     addEventsTr(tr) {
         tr.querySelector('.delete').addEventListener('click', e => {
             this.addEditMode(tr);
         });
+        tr.querySelector('.edit').addEventListener('click', e => {
+            this.addEditMode(tr);
+            this.loadDataEdit(tr);
+        })
     }
 }
 
