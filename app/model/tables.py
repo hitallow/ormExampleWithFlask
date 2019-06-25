@@ -12,8 +12,8 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique= True)
     name = db.Column(db.String(30), unique=True)
     email = db.Column(db.String(30))
-    addres = db.Column(db.String(30))
-    fone = db.Column(db.String(15))
+    address = db.Column(db.String(30))
+    phone = db.Column(db.String(15))
     createat = db.Column(db.DateTime) 
     
     dependents = db.relationship('Dependent')
@@ -21,8 +21,8 @@ class User(db.Model):
     def __init__(self, name, email = None, addres = None, fone = None ):
         self.name = name
         self.email = email
-        self.addres = addres
-        self.fone = fone
+        self.address = addres
+        self.phone = fone
 
     def __repr__(self):
         return "<User : {}>".format(self.name)
@@ -33,8 +33,8 @@ class User(db.Model):
             "id": self.id,
             "name": self.name,
             "email":self.email,
-            "address":self.addres,
-            "phone": self.fone
+            "address":self.address,
+            "phone": self.phone
         }
 """
     Classe(tabela)
