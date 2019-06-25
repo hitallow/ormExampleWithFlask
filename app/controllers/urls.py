@@ -22,7 +22,6 @@ def getUser():
 def insertUser():
     
     data = request.get_json()
-    print(data)
     user = User(name=data['name'],email=data['email'], addres=data['address'], fone=data['phone'])
     db.session.add(user)
     db.session.commit()
@@ -36,7 +35,15 @@ def insertUser():
 def search():
     users = User.query.order_by(User.name).all()
     return jsonify(list(map(lambda x: x.serialize(), users)))
-    
+
+@app.route('/index/delete', methods=['POST'])
+def delete():
+    data = request.get_json()
+    user = User.query.filter_by(id=data['id']).first()
+    db.session.delete(user) 
+    db.session.commit()
+    return 'OK'
+
 
 @app.route('/getall')
 def getAll():

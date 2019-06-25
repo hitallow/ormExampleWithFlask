@@ -33,9 +33,13 @@ class Controller {
 
         this.modalAdd = document.getElementById('addEmployeeModal');
 
+        this.modalDelete = document.getElementById('deleteEmployeeModal');
+
         this.body = document.body;
 
         this.dataUsers = document.getElementById('data-users');
+
+        this.btnDelete = document.getElementById('delete');
 
         this.initEvents();
 
@@ -47,14 +51,19 @@ class Controller {
             e.preventDefault();
             let user = this.colectData();
             if (user) {
-                this.postOnBackEnd(user, id => {
+                this.postOnBackEndInsert(user, id => {
                     this.insertHTML(user, id);
                 });
-
-
             }
+        });
+
+        this.btnDelete.addEventListener('click', e => {
+            e.preventDefault();
+            let el = this.dataUsers.querySelector('.InEditionMode');
+            let id = el.getAttribute('data-id');
+            this.postOnBackEndDelete(id);
+            el.remove();
         })
-            ;
     }
 
     selectUsers() {
@@ -70,8 +79,24 @@ class Controller {
         xhr.send();
     }
 
+    postOnBackEndDelete(id) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", '/index/delete');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onloadend = (e => {
+            //this.body.className = this.body.className.replace('modal-open','');
+            this.body.classList.remove('modal-open');
+            this.modalDelete.classList.remove('in');
+            this.body.style = '';
+            this.modalDelete.style = 'display : none;';
+            document.getElementsByClassName('modal-backdrop')[0].remove();
+        });
+        // envia minha requisiçao ajax
+        xhr.send(JSON.stringify({ id }));
+    }
 
-    postOnBackEnd(user, fn) {
+
+    postOnBackEndInsert(user, fn) {
 
         let xhr = new XMLHttpRequest();
         xhr.open("POST", '/index/insertUser');
@@ -88,8 +113,6 @@ class Controller {
         });
         // envia minha requisiçao ajax
         xhr.send(JSON.stringify(user));
-
-
     }
 
     colectData() {
@@ -135,10 +158,28 @@ class Controller {
 
         let tr = document.createElement("tr");
         tr.innerHTML = html;
-        tr.dataset.id = JSON.stringify({ id });
+        tr.dataset.id = id;
+        this.addEventsTr(tr);
         this.dataUsers.appendChild(tr);
     }
 
+    addEditMode(tr) {
+        let trs = this.dataUsers.getElementsByTagName('tr');
+        [...trs].forEach(el => {
+            el.classList.remove('InEditionMode');
+        });
+        tr.classList.add('InEditionMode');
+        // if (!tr.classList.contains('InEditionMode')) {
+        //     tr.classList.add('InEditionMode');
+        // } else {
+        //     tr.classList.remove('InEditionMode');
+        // }
+    }
+    addEventsTr(tr) {
+        tr.querySelector('.delete').addEventListener('click', e => {
+            this.addEditMode(tr);
+        });
+    }
 }
 
 
