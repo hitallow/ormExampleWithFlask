@@ -27,6 +27,15 @@ class User(db.Model):
     def __repr__(self):
         return "<User : {}>".format(self.name)
 
+    # cria um dicionario pra mim pra eu usar no json
+    def serialize(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email":self.email,
+            "address":self.addres,
+            "phone": self.fone
+        }
 """
     Classe(tabela)
 """

@@ -32,13 +32,11 @@ def insertUser():
 
     return json.dumps(response)
 
-@app.route('/search/',defaults={'name':'all'}, methods=['GET'])
-@app.route('/search/<name>', methods=['GET'])
-def search(name):
-    if name == 'all':
-        x = User.query.order_by(User.name).all()
-    print(x)
-    return 'OK'
+@app.route('/index/search', methods=['POST'])
+def search():
+    users = User.query.order_by(User.name).all()
+    return jsonify(list(map(lambda x: x.serialize(), users)))
+    
 
 @app.route('/getall')
 def getAll():

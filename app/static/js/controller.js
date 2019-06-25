@@ -38,44 +38,58 @@ class Controller {
         this.dataUsers = document.getElementById('data-users');
 
         this.initEvents();
+
+        this.selectUsers();
     }
 
     initEvents() {
         this.btnAddUser.addEventListener('click', e => {
             e.preventDefault();
             let user = this.colectData();
-            if(user)
-            {
-                this.postOnBackEnd(user, id =>{
+            if (user) {
+                this.postOnBackEnd(user, id => {
                     this.insertHTML(user, id);
                 });
-                
-                
+
+
             }
         })
-        ;
+            ;
+    }
+
+    selectUsers() {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", 'index/search');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.onloadend = (e => {
+            let users = JSON.parse(xhr.responseText);
+            users.forEach(user => {
+                this.insertHTML(user, user.id);
+            });
+        });
+        xhr.send();
     }
 
 
     postOnBackEnd(user, fn) {
-        let id ;
+
         let xhr = new XMLHttpRequest();
         xhr.open("POST", '/index/insertUser');
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onloadend = (e =>{
+        xhr.onloadend = (e => {
             //this.body.className = this.body.className.replace('modal-open','');
             this.body.classList.remove('modal-open');
             this.modalAdd.classList.remove('in');
             this.body.style = '';
             this.modalAdd.style = 'display : none;';
             document.getElementsByClassName('modal-backdrop')[0].remove();
-            let response =JSON.parse(xhr.responseText); 
-            fn(response.id);            
+            let response = JSON.parse(xhr.responseText);
+            fn(response.id);
         });
         // envia minha requisiçao ajax
         xhr.send(JSON.stringify(user));
 
-        
+
     }
 
     colectData() {
@@ -98,8 +112,8 @@ class Controller {
 
 
 
-    insertHTML( data, id) {
-        
+    insertHTML(data, id) {
+
         let html =
             `
         <td>
@@ -119,15 +133,12 @@ class Controller {
                     data-toggle="tooltip" title="Delete">&#xE872;</i></a>
         </td>`
 
-    let tr = document.createElement("tr");
-    tr.innerHTML = html;
-    tr.dataset.id = JSON.stringify({ id}); 
-    this.dataUsers.appendChild(tr);
+        let tr = document.createElement("tr");
+        tr.innerHTML = html;
+        tr.dataset.id = JSON.stringify({ id });
+        this.dataUsers.appendChild(tr);
     }
 
-    addEvents(tr) {
-
-    }
 }
 
 
