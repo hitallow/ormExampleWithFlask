@@ -7,8 +7,8 @@ from app.model.tables import User, Dependent
 """
     Rota inicial
 """
-@app.route('/index')
-@app.route('/')
+@app.route('/index',  methods=['GET'])
+@app.route('/', methods=['GET'] )
 def index():
     return render_template('index.html')
 
@@ -20,11 +20,17 @@ def getUser():
 @app.route('/index/insertUser', methods=['POST'])
 @app.route('/index/insertuser', methods=['POST'])
 def insertUser():
+    
     data = request.get_json()
+    print(data)
     user = User(name=data['name'],email=data['email'], addres=data['address'], fone=data['phone'])
     db.session.add(user)
     db.session.commit()
-    return "OK"
+    response = {
+        'id' : user.id
+    }
+
+    return json.dumps(response)
 
 @app.route('/search/',defaults={'name':'all'}, methods=['GET'])
 @app.route('/search/<name>', methods=['GET'])

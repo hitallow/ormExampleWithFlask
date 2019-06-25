@@ -44,15 +44,21 @@ class Controller {
         this.btnAddUser.addEventListener('click', e => {
             e.preventDefault();
             let user = this.colectData();
-            this.postOnBackEnd(user);
-            this.insertHTML(user);
-
+            if(user)
+            {
+                this.postOnBackEnd(user, id =>{
+                    this.insertHTML(user, id);
+                });
+                
+                
+            }
         })
-        console.log(this.body);
+        ;
     }
 
 
-    postOnBackEnd(user) {
+    postOnBackEnd(user, fn) {
+        let id ;
         let xhr = new XMLHttpRequest();
         xhr.open("POST", '/index/insertUser');
         xhr.setRequestHeader('Content-Type', 'application/json');
@@ -62,10 +68,14 @@ class Controller {
             this.modalAdd.classList.remove('in');
             this.body.style = '';
             this.modalAdd.style = 'display : none;';
-            document.getElementsByClassName('modal-backdrop')[0].remove();            
+            document.getElementsByClassName('modal-backdrop')[0].remove();
+            let response =JSON.parse(xhr.responseText); 
+            fn(response.id);            
         });
         // envia minha requisiçao ajax
-        xhr.send(user);
+        xhr.send(JSON.stringify(user));
+
+        
     }
 
     colectData() {
@@ -88,7 +98,8 @@ class Controller {
 
 
 
-    insertHTML( data) {
+    insertHTML( data, id) {
+        
         let html =
             `
         <td>
@@ -110,6 +121,7 @@ class Controller {
 
     let tr = document.createElement("tr");
     tr.innerHTML = html;
+    tr.dataset.id = JSON.stringify({ id}); 
     this.dataUsers.appendChild(tr);
     }
 
